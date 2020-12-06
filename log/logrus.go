@@ -17,11 +17,9 @@ func NewLogger() *logrus.Logger {
 
 	basePath, _ := os.Getwd()
 	path := fmt.Sprintf("%s/temp/log", basePath)
+
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		err := os.Mkdir(path, os.ModePerm)
-		if err != nil {
-			panic(err)
-		}
+		_ = os.MkdirAll("temp/log", os.ModePerm)
 	}
 	y, m, _ := time.Now().Date()
 	pathMap := lfshook.PathMap{
