@@ -4,11 +4,14 @@ import (
 	"context"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/gorilla/sessions"
 	"github.com/hinha/api-box/provider"
 	"github.com/hinha/api-box/provider/api/command"
 	"github.com/hinha/api-box/provider/api/handler"
+	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"os"
 	"strconv"
 )
 
@@ -48,14 +51,23 @@ func (a *API) InjectAPI(handler provider.APIHandler) {
 				context.Set("user-id", convertedUserID)
 			}
 		}
+		sess, _ := session.Get("session", context)
+		sess.Options = &sessions.Options{
+			Path:     "/",
+			MaxAge:   86400 * 7,
+			HttpOnly: true,
+		}
 
-		handler.Handle(context)
+		handler.Handle(context, sess)
 		return nil
 	})
 }
 
 func (a *API) Run() error {
-	a.engine.Use(middleware.Logger())
+	a.engine.Use(
+		middleware.Logger(),
+		session.Middleware(sessions.NewCookieStore([]byte(os.Getenv("APP_ENCRYPTION_KEY")))),
+	)
 	a.InjectAPI(handler.NewHealth())
 	return a.engine.Start(fmt.Sprintf(":%d", a.port))
 }
