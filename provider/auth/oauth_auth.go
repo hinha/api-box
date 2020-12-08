@@ -1,11 +1,11 @@
-package oauth
+package auth
 
 import (
 	"context"
 	"github.com/hinha/api-box/entity"
 	"github.com/hinha/api-box/provider"
-	"github.com/hinha/api-box/provider/oauth/api"
-	"github.com/hinha/api-box/provider/oauth/usecase"
+	"github.com/hinha/api-box/provider/auth/api"
+	"github.com/hinha/api-box/provider/auth/usecase"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"os"

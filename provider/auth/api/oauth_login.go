@@ -30,7 +30,7 @@ func (r *Login) Method() string {
 	return "GET"
 }
 
-// Handle request google oauth
+// Handle request google auth
 func (r *Login) Handle(context provider.APIContext, sess *sessions.Session) {
 	state, err := r.RandToken(32)
 	if err != nil {
