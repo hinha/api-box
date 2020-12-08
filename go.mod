@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/dghubble/sling v1.3.0
+	github.com/go-sql-driver/mysql v1.5.0
 	github.com/google/uuid v1.1.2
 	github.com/gorilla/sessions v1.2.1
 	github.com/labstack/echo-contrib v0.9.0
