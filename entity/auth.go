@@ -16,6 +16,7 @@ type GoogleUser struct {
 	Sub           string `json:"sub"`
 	Name          string `json:"name"`
 	GivenName     string `json:"given_name"`
+	Password      string `json:"password"`
 	FamilyName    string `json:"family_name"`
 	Profile       string `json:"profile"`
 	Picture       string `json:"picture"`

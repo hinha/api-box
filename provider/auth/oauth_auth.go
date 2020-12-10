@@ -11,35 +11,22 @@ import (
 	"os"
 )
 
-//type GoogleOAuth struct {
-//	network provider.GoogleOAuth
-//	googleNetworkCfg provider.GoogleOAuthNetworkConfig
-//}
-//
-//func Fabricate(network provider.GoogleOAuth) *GoogleOAuth {
-//	networkCfg := &usecase.GoogleOAuthNetworkConfig{}
-//	networkCfg.Cfg.ClientID = os.Getenv("GoogleClientID")
-//	networkCfg.Cfg.ClientSecret = os.Getenv("GoogleClientSecret")
-//	networkCfg.Cfg.RedirectURL = os.Getenv("GoogleRedirectURL")
-//	networkCfg.Cfg.Scopes = []string{"https://www.googleapis.com/auth/userinfo.email"}
-//	return &GoogleOAuth{
-//		network: network,
-//		googleNetworkCfg: networkCfg,
-//	}
-//}
-
 type GoogleOAuth struct {
-	conf *oauth2.Config
+	conf         *oauth2.Config
+	userProvider provider.UserOAuth
 }
 
-func FabricateGoogle() *GoogleOAuth {
+func FabricateGoogle(userProvider provider.UserOAuth) *GoogleOAuth {
 	conf := &oauth2.Config{}
 	conf.ClientID = os.Getenv("GoogleClientID")
 	conf.ClientSecret = os.Getenv("GoogleClientSecret")
 	conf.RedirectURL = os.Getenv("GoogleRedirectURL")
-	conf.Scopes = []string{"https://www.googleapis.com/auth/userinfo.profile"}
+	conf.Scopes = []string{
+		"https://www.googleapis.com/auth/userinfo.email",
+		"https://www.googleapis.com/auth/userinfo.profile",
+	}
 	conf.Endpoint = google.Endpoint
-	return &GoogleOAuth{conf: conf}
+	return &GoogleOAuth{conf: conf, userProvider: userProvider}
 }
 
 func (g *GoogleOAuth) FabricateAPI(engine provider.APIEngine) {

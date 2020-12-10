@@ -31,8 +31,7 @@ func (r *CallbackURI) Method() string {
 func (r *CallbackURI) Handle(context provider.APIContext, sess *sessions.Session) {
 	var request entity.CallbackOAuth
 	code := context.QueryParam("code")
-	state := context.QueryParam("state")
-	if code == "" || state == "" {
+	if code == "" {
 		_ = context.JSON(http.StatusBadRequest, map[string]interface{}{
 			"errors":  []string{"bad request given by client"},
 			"message": "Bad request",
@@ -40,7 +39,6 @@ func (r *CallbackURI) Handle(context provider.APIContext, sess *sessions.Session
 		return
 	}
 	request.Code = code
-	request.State = state
 
 	switch context.Param("provider") {
 	case "google":

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/hinha/api-box/entity"
+	"github.com/hinha/api-box/provider"
 	"golang.org/x/oauth2"
 	"io/ioutil"
 	"net/http"
@@ -16,12 +17,14 @@ type Code struct {
 
 func (l *Code) ParseCode(ctx context.Context, request entity.CallbackOAuth, conf *oauth2.Config) (entity.GoogleUser, *entity.ApplicationError) {
 
-	token, err := conf.Exchange(oauth2.NoContext, request.Code)
+	// get code from client ex: 4/0AY0e-xxx
+	token, err := conf.Exchange(ctx, request.Code)
 	if err != nil {
 		return entity.GoogleUser{}, l.invalidAuthError("Login failed. credential invalid.")
 	}
 
-	client := conf.Client(oauth2.NoContext, token)
+	// Verify token
+	client := conf.Client(ctx, token)
 	userinfo, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
 	if err != nil {
 		return entity.GoogleUser{}, l.invalidAuthError("Login failed. Please try again.")
@@ -35,6 +38,15 @@ func (l *Code) ParseCode(ctx context.Context, request entity.CallbackOAuth, conf
 	}
 
 	return u, nil
+}
+
+func (l *Login) PerformOAuth(ctx context.Context, response entity.GoogleUser, userProvider provider.UserOAuth) *entity.ApplicationError {
+	_, errProvider := userProvider.CreateOAuth(ctx, response)
+	if errProvider != nil {
+		return errProvider
+	}
+
+	return nil
 }
 
 func (l *Code) invalidParseURLError() *entity.ApplicationError {
